@@ -2,6 +2,13 @@
 - name: Include OS-specific variables.
   include_vars: "{{ ansible_os_family }}.yml"
 
+
+- name: Create a directory /var/lib/pgdocker
+  file:
+    path: /var/lib/pgdocker
+    state: directory
+    mode: '0755'
+
 - name: Install AWX dependencies.
   package:
     name: "{{ item }}"
