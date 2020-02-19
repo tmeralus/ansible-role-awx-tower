@@ -4,3 +4,6 @@
     - name: Include OS-specific variables.
       include_vars: "defaults/main.yml"
     - import_tasks: "tasks/main.yml"
+  roles:
+    - { role: image_build }
+    - { role: image_push, when: "docker_registry is defined" }

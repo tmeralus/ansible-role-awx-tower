@@ -2,10 +2,9 @@
 dependencies: []
 
 galaxy_info:
+  role_name: awx_tower
   author: tmeralus
   description: "Install AWX (Open Source Ansible Tower version)."
-  company:
-  license:
   min_ansible_version: 2.0
   platforms:
     - name: EL
@@ -24,9 +23,5 @@ galaxy_info:
     - automation
     - system
     - web
-    - django
-    - awx
-    - tower
-    - playbook
+    - awx  
     - ci
-    - cd

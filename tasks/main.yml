@@ -5,7 +5,7 @@
 
 - name: Create a directory /var/lib/pgdocker
   file:
-    path: /var/lib/pgdocker
+    path: "{{ postgres_data_dir }}" # /var/lib/pgdocker
     state: directory
     mode: '0755'
 
@@ -15,7 +15,7 @@
     state: present
   with_items: "{{ awx_package_dependencies }}"
 
-- name: Clone AWX into configured directory.
+- name: Clone AWX into {{ awx_repo_dir }}
   git:
     repo: "{{ awx_repo }}"
     dest: "{{ awx_repo_dir }}"
@@ -24,6 +24,4 @@
     force: yes
     accept_hostkey: yes
 
-- include: awx-install-playbook.yml
-  when: awx_run_install_playbook
 #

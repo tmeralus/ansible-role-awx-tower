@@ -10,3 +10,9 @@
     path: /etc/awx_playbook_complete
     state: touch
   changed_when: False
+
+- name: Run the AWX installation from {{ awx_repo_dir }}
+  command: "ansible-playbook -i inventory install.yml -e postgres_data_dir={{ postgres_data_dir }}"
+  args:
+    chdir: "{{ awx_repo_dir }}/installer"
+    creates: /etc/awx_playbook_complete
