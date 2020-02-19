@@ -1,9 +1,18 @@
 - hosts: localhost
-  become: yes
+  become: true
   tasks:
     - name: Include OS-specific variables.
       include_vars: "defaults/main.yml"
     - import_tasks: "tasks/main.yml"
-  roles:
-    - { role: image_build }
-    - { role: image_push, when: "docker_registry is defined" }
+
+    - name: Run image_build playbooks
+      include_role:
+        name: image_build
+        defaults_from: main
+        tasks_from: main
+
+    - name: Run image_push playbooks
+      include_role:
+        name: image_push
+        defaults_from: main
+        tasks_from: main

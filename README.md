@@ -17,5 +17,8 @@ Variables to control what version of AWX is checked out and installed.
 
 By default, this role will run the installation playbook included with AWX (which builds a set of containers and runs them). You can disable the playbook run by setting this variable to `no`.
 
+## Things to Note
+ln -s /usr/bin/python36 /usr/bin/python3
+
+
 After AWX is installed, you can log in with the default username `admin` and password `password`.
- 

@@ -1,7 +1,17 @@
 ---
 awx_repo: https://github.com/ansible/awx.git
 awx_repo_dir: "~/awx"
+awx_build_repo_dir: "~/awx/awx"
 awx_version: devel
 awx_keep_updated: yes
 awx_run_install_playbook: yes
 postgres_data_dir: /var/lib/pgdocker
+awx_sdist_file: "awx-{{ awx_version }}.tar.gz"
+awx_package_dependencies:
+pip_package_dep: #"['docker', 'docker-py', 'docker-wrapper', 'docker-pycreds', 'urllib-s3', 'urllib4', 'urllib_gssapi']"
+ - docker
+ - docker-wrapper
+ - docker-pycreds
+ - docker-compose
+ - urllib-s3
+ - urllib_gssapi
