@@ -15,3 +15,22 @@ pip_package_dep: #"['docker', 'docker-py', 'docker-wrapper', 'docker-pycreds', '
  - docker-compose
  - urllib-s3
  - urllib_gssapi
+
+http_proxy:
+https_proxy:
+no_proxy:
+awx_local_base_config_path: "/opt/docker/builds"
+admin_user: admin
+admin_password: password
+pg_username: awx
+pg_password: awxpass
+pg_database: awx
+pg_port: 5432
+awx_task_hostname: awx
+awx_web_hostname: awxweb
+postgres_data_dir: /tmp/pgdocker
+host_port: 80
+dockerhub_base: ansible
+docker_compose_dir: /var/lib/awx
+rabbitmq_password: awxpass
+rabbitmq_erlang_cookie: cookiemonster
