@@ -33,49 +33,57 @@
   delegate_to: localhost
   register: sdist
 
+# awx+_repo dir points to /root/awx/dist/awx-devel.tar.gz
+# instead of /home/ansible/awx
+# could be cause of issues with building
+# using become flag in playbook main force playbook to run as root
+# chaning the dir from expected /home/ansible/awx to /root/awx
+# test changes now
 - name: Clean distribution
-  shell: make clean
+  shell: "make clean"
   args:
     chdir: "{{ awx_repo_dir }}"
   ignore_errors: yes
   when: not sdist.stat.exists
   delegate_to: localhost
 
+- name: Pull {{ docker_container_repo }} container
+  docker_image:
+    name: "{{ docker_container_repo }}"
+    source: pull
+
 - name: Build sdist builder image
   docker_image:
-    buildargs:
-      http_proxy: "{{ http_proxy | default('') }}"
-      https_proxy: "{{ https_proxy | default('') }}"
-      no_proxy: "{{ no_proxy | default('') }}"
-    path: "{{ role_path }}/files"
-    dockerfile: Dockerfile.sdist
+    build:
+      path: "{{ role_path }}/files"
+      dockerfile: Dockerfile.sdist
     name: awx_sdist_builder
     tag: "{{ awx_version }}"
-    force: true
+    source: build
+    force_source: yes
   delegate_to: localhost
   when: use_container_for_build|default(true)|bool
-  # become: true
+  become: true
+  tags:
+    - build
 
 - name: Build AWX distribution using container
   docker_container:
-    env:
-      http_proxy: "{{ http_proxy | default('') }}"
-      https_proxy: "{{ https_proxy | default('') }}"
-      no_proxy: "{{ no_proxy | default('') }}"
     image: "awx_sdist_builder:{{ awx_version }}"
     name: awx_sdist_builder
     state: started
     detach: false
     volumes:
       - ../:/awx:Z
+    source: build
   delegate_to: localhost
   when: use_container_for_build|default(true)|bool
-  # become: true
+  become: true
 
 - name: Build AWX distribution locally
   shell: make sdist
   args:
-    chdir: ..
+    chdir: "{{ awx_repo_dir }}"
   delegate_to: localhost
   when: not use_container_for_build|default(true)|bool
   # become: true
@@ -204,30 +212,26 @@
 
 - name: Build base web image
   docker_image:
-    buildargs:
-      http_proxy: "{{ http_proxy | default('') }}"
-      https_proxy: "{{ https_proxy | default('') }}"
-      no_proxy: "{{ no_proxy | default('') }}"
-    path: "{{ docker_base_path }}"
-    dockerfile: Dockerfile
+    build:
+      path: "{{ docker_base_path }}"
+      dockerfile: Dockerfile
     name: "{{ web_image }}"
     tag: "{{ awx_version }}"
-    force: yes
+    source: build
+    force_source: yes
   delegate_to: localhost
   # become: true
 
 - name: Build base task image
   docker_image:
-    buildargs:
-      http_proxy: "{{ http_proxy | default('') }}"
-      https_proxy: "{{ https_proxy | default('') }}"
-      no_proxy: "{{ no_proxy | default('') }}"
-    path: "{{ docker_base_path }}"
-    dockerfile: Dockerfile.task
+    build:
+      path: "{{ docker_base_path }}"
+      dockerfile: Dockerfile.task
     name: "{{ task_image }}"
     tag: "{{ awx_version }}"
     pull: no
-    force: yes
+    source: build
+    force_source: yes
   delegate_to: localhost
   # become: true
 
